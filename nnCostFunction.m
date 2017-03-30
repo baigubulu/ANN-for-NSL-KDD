@@ -27,14 +27,14 @@ s = size(X);
 
 for i = 1:m
     y_new = zeros([num_labels 1]);
-    y_new(y{i, 1}) = 1;
+    y_new(y(i)) = 1;
         
     a1 = ones([401 1]);
     a2 = ones([25 1]);
     a3 = ones([10 1]);
 
     a1 = X(i, 1:s(2));
-    a1 = [1; a1];
+    a1 = [1; a1'];
     z1 = Theta1 * a1;
     a2 = sigmoid(z1);
     a2 = [1; a2];
@@ -73,7 +73,7 @@ Delta_2 = zeros([num_labels hidden_layer_size+1]);
 
 for i = 1:m
     y_new = zeros([num_labels 1]);
-    y_new(y{i, 1}) = 1;
+    y_new(y(i)) = 1;
         
     a1 = ones([401 1]);
     a2 = ones([25 1]);

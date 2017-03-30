@@ -1,22 +1,27 @@
 %Read test data
-X = dataset('File','KDDTrain+.txt','Delimiter',',');
-y = dataset('File','KDDTrain+.txt','Delimiter',',');
+tempX = dataset('File','KDDTrain+.txt','Delimiter',',');
+tempY = dataset('File','KDDTrain+.txt','Delimiter',',');
+tempX(:,2) = [];
+tempX(:,2) = [];
+tempX(:,2) = [];
 
 % Read labels into y
 for i = 1:41
-    y(:,1) = [];
+    tempY(:,1) = [];
 end
-y(:,2) = [];
+tempY(:,2) = [];
+
+X = double(tempX);
+y = double(tempY);
 
 %remove label columns from X
-X(:,42) = [];
-X(:,42) = [];
+X(:,40) = [];
+X(:,39) = [];
 
 %network architecture parameters
-input_size = size(X, 1);
+input_size = size(X, );
 hidden_size = 200;
 num_labels = 6;
-
 
 %randomly initialize weights 
 Init_Theta1 = randInitializeWeights(input_size, hidden_size);
@@ -39,48 +44,46 @@ Theta2 = reshape(thetaVec((1 + (hidden_size * (input_size + 1))):end), num_label
             
 
 %-----TESTING---
-% Read digits
-f3 = fopen('t10k-images-idx3-ubyte', 'r', 'b');
-header = fread(f3, 4, 'int32');
+% Read
+tempX = dataset('File','KDDTest+.txt','Delimiter',',');
+tempY = dataset('File','KDDTest+.txt','Delimiter',',');
+tempX(:,2) = [];
+tempX(:,2) = [];
+tempX(:,2) = [];
 
-train = fread(f3, 10000*784);
-X2 = reshape(train, [784 10000]);
-X2 = X2';
-
-% Read digit labels
-f4 = fopen('t10k-labels-idx1-ubyte', 'r', 'b');
-header = fread(f4, 2, 'int32');
-y2 = fread(f4, 10000);
-
-for i = 1:size(y2, 1)
-    if(y2(i) == 0)
-        y2(i) = 10;
-    end
+% Read labels into y
+for i = 1:41
+    tempY(:,1) = [];
 end
+tempY(:,2) = [];
+tempX(:,40) = [];
+tempX(:,39) = [];
 
-fclose(f3);
-fclose(f4);
+X2 = double(tempX);
+y2 = double(tempY);
+
+%remove label columns from X
 
 
 %---TESTING------
 p = predict(Theta1, Theta2, X);
 
 confusion = zeros([num_labels num_labels]);
-for i = 1:60000
+for i = 1:size(X, 1)
     confusion(y(i), p(i)) = confusion(y(i), p(i)) + 1;
 end
 
 sum = 0;
-for i = 1:10
+for i = 1:num_labels
     sum = sum + confusion(i, i);
 end
-training_accuracy = sum / 60000 * 100;
+training_accuracy = sum / size(X, 1) * 100;
 
 p2 = predict(Theta1, Theta2, X2);
 correct = zeros([1 10000]);
 
 confusion2 = zeros([num_labels num_labels]);
-for i = 1:10000
+for i = 1:size(X2, 1)
     confusion2(y2(i), p2(i)) = confusion2(y2(i), p2(i)) + 1;
     if y2(i) == p2(i)
         correct(i) = 1;
@@ -88,7 +91,7 @@ for i = 1:10000
 end
 
 sum = 0;
-for i = 1:10
+for i = 1:num_labels
     sum = sum + confusion2(i, i);
 end
-testing_accuracy = sum /10000 * 100;
+testing_accuracy = sum /size(X2, 1) * 100;
