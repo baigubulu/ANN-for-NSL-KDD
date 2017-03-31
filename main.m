@@ -19,7 +19,7 @@ X(:,40) = [];
 X(:,39) = [];
 
 %network architecture parameters
-input_size = size(X, );
+input_size = size(X, 2);
 hidden_size = 200;
 num_labels = 6;
 
@@ -35,7 +35,7 @@ lambda = 1.5;
 initial_thetaVec = [Init_Theta1(:); Init_Theta2(:)];
 %[J, grad] = nnCostFunction(initial_thetaVec, input_size, hidden_size, num_labels,X, y, lambda);
 options = optimset('MaxIter', 50);
-[thetaVec, cost] = fmincg (@(t)(nnCostFunction(t, input_size, hidden_size, num_labels,X, y, lambda)), initial_thetaVec, options);
+[thetaVec, cost] = fmincg (@(t)(nnCostFunction(t, input_size, hidden_size, num_labels,X, y, lambda)), thetaVec, options);
 
 
 %reshape theta vector into the weight matrices
@@ -56,13 +56,13 @@ for i = 1:41
     tempY(:,1) = [];
 end
 tempY(:,2) = [];
+
+%remove label columns from X
 tempX(:,40) = [];
 tempX(:,39) = [];
 
 X2 = double(tempX);
 y2 = double(tempY);
-
-%remove label columns from X
 
 
 %---TESTING------
@@ -94,4 +94,15 @@ sum = 0;
 for i = 1:num_labels
     sum = sum + confusion2(i, i);
 end
-testing_accuracy = sum /size(X2, 1) * 100;
+testing_accuracy_1 = sum /size(X2, 1) * 100;
+
+sum = 0;
+for i = 1:4
+    sum = sum + confusion2(i, 1);
+    sum = sum + confusion2(i, 2);
+    sum = sum + confusion2(i, 3);
+    sum = sum + confusion2(i, 4);
+end
+sum = sum + confusion2(5, 5);
+sum = sum + confusion2(6, 6);
+testing_accuracy_2 = sum /size(X2, 1) * 100;
