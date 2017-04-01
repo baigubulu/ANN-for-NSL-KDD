@@ -20,22 +20,23 @@ X(:,39) = [];
 
 %network architecture parameters
 input_size = size(X, 2);
-hidden_size = 200;
+hidden_size = 150;
 num_labels = 6;
+num_samples = 30000;
 
 %randomly initialize weights 
 Init_Theta1 = randInitializeWeights(input_size, hidden_size);
 Init_Theta2 = randInitializeWeights(hidden_size, num_labels);
 %set regularization parameter lambda
-lambda = 1.5;
+lambda = 4;
 
 
 %----Training-------
 %unroll theta's for the optimization function
 initial_thetaVec = [Init_Theta1(:); Init_Theta2(:)];
 %[J, grad] = nnCostFunction(initial_thetaVec, input_size, hidden_size, num_labels,X, y, lambda);
-options = optimset('MaxIter', 50);
-[thetaVec, cost] = fmincg (@(t)(nnCostFunction(t, input_size, hidden_size, num_labels,X, y, lambda)), thetaVec, options);
+options = optimset('MaxIter', 1000);
+[thetaVec, cost] = fmincg (@(t)(nnCostFunction(t, input_size, hidden_size, num_labels,X, y, lambda, num_samples)), initial_thetaVec, options);
 
 
 %reshape theta vector into the weight matrices

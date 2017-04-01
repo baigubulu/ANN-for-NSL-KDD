@@ -2,7 +2,7 @@ function [J ,grad] = nnCostFunction(nn_params, ...
                                    input_layer_size, ...
                                    hidden_layer_size, ...
                                    num_labels, ...
-                                   X, y, lambda, num_samples)
+                                   X, y, lambda)
                                
 % Reshape nn_params back into the parameters Theta1 and Theta2, the weight matrices
 % for our 2 layer neural network
@@ -27,19 +27,18 @@ s = size(X);
 
 
     
-    a = 1;
+    a = 0;
     b = 125973;
-    r = (b-a).*rand(num_samples,1) + a;
+    r = (b-a).*rand(30000,1) + a;
     r = floor(r);
         
 
-for jIterate = 1:num_samples
+for j = 1:num_samples
     
-    i = r(jIterate, 1);
+    i = r(j);
     
     y_new = zeros([num_labels 1]);
-    label = y(i);
-    y_new(label) = 1;
+    y_new(y(i)) = 1;
         
     a1 = ones([401 1]);
     a2 = ones([25 1]);
@@ -62,7 +61,7 @@ for jIterate = 1:num_samples
     S = S + cost;
 end
 
-J = S/num_samples;
+J = S/m;
 
 square = 0;
 for j = 1:hidden_layer_size
@@ -77,16 +76,13 @@ for j = 1:num_labels
     end
 end
 
-J = J + (square * lambda / 2/ num_samples);
+J = J + (square * lambda / 2/ m);
 
 
 Delta_1 = zeros([hidden_layer_size input_layer_size + 1]); 
 Delta_2 = zeros([num_labels hidden_layer_size+1]);
 
-for jIter = 1:num_samples
-    
-    i = r(jIter, 1);
-    
+for i = 1:m
     y_new = zeros([num_labels 1]);
     y_new(y(i)) = 1;
         
@@ -110,8 +106,8 @@ for jIter = 1:num_samples
     Delta_2 = Delta_2 + delta_3*a2';
 end
 
-Theta1_grad = Delta_1/num_samples;
-Theta2_grad = Delta_2/num_samples;
+Theta1_grad = Delta_1/m;
+Theta2_grad = Delta_2/m;
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
